@@ -1,91 +1,60 @@
-NAME	=	cub3d
-CC		=	@cc
-AR		=	@ar rcs
-CFLAGS	=	-Wall -Wextra -Werror -MMD -MP -g
-VLGRIND =	--suppressions=./readline.supp --leak-check=full --show-leak-kinds=all --track-fds=yes --track-origins=yes
+# Makefile for cub3D
 
-SRC_DIR	=	src/
-INC_DIR	=	inc/
-LIB_DIR	=	lib/
-OBJ_DIR	=	obj/
-DEP_DIR	=	dep/
-LIBFT_DIR = $(LIB_DIR)libft/
-MLX_DIR   = $(LIB_DIR)minilibx-linux/
+NAME = cub3d
 
-SRC 	=	main.c \
-			
-SRCS	= $(addprefix $(SRC_DIR), $(SRC))
-OBJS	= $(patsubst $(SRC_DIR)%, $(OBJ_DIR)%,$(SRCS:.c=.o))
-DEPS	= $(patsubst $(SRC_DIR)%, $(DEP_DIR)%,$(SRCS:.c=.d))
+# Compilers and flags
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g
+MLX_FLAGS = -lmlx -lXext -lX11 # Para Linux
+# MLX_FLAGS = -lmlx -framework OpenGL -framework AppKit # Para macOS
 
-LIBFT	 = $(LIBFT_DIR)bin/libft.a
-INC_DIRS = $(INC_DIR)
-INC_DIRS += $(LIBFT_DIR)$(INC_DIR)
-INCS	 = $(addprefix -I, $(INC_DIRS))
+# --- SEÇÃO CORRIGIDA ---
+# Directories
+INCLUDES_DIR = includes/
+LIBFT_DIR = lib/libft/
+LIBFT_INC_DIR = $(LIBFT_DIR)inc/  # Caminho para os headers da libft
+LIBFT_BIN_DIR = $(LIBFT_DIR)bin/  # Caminho para a libft.a compilada
+MLX_DIR = lib/minilibx-linux/
 
-MLX 	 = -L$(MLX_DIR) -lmlx -lX11 -lXext -lm
-INCS	+= -I$(MLX_DIR)
+# Includes (para o COMPILADOR encontrar os .h)
+INCLUDES = -I$(INCLUDES_DIR) -I$(LIBFT_INC_DIR) -I$(MLX_DIR)
 
-RDLINE_FLAG = -lreadline
-# INCS	+= -I/usr/include/readline
-
-RESET	= \033[0m
-BOLD	= \033[1m
-RED		= \033[31m
-GREEN	= \033[32m
-YELLOW	= \033[33m
-BLUE	= \033[34m
+# Libraries (para o LINKER encontrar os .a)
+LIBS = -L$(LIBFT_BIN_DIR) -lft -L$(MLX_DIR) $(MLX_FLAGS)
+# --- FIM DA SEÇÃO CORRIGIDA ---
 
 
+# Source files
+SRCS = src/main.c \
+		src/parser/parse_file.c \
+		src/parser/parse_textures.c \
+		src/parser/parse_colors.c \
+		src/utils/error.c \
+		src/utils/free.c
+
+# Object files
+OBJS = $(SRCS:.c=.o)
+
+# Rules
 all: $(NAME)
 
-$(OBJ_DIR) $(DEP_DIR):
-	@mkdir -p $@
+$(NAME): $(OBJS)
+	@make -C $(LIBFT_DIR) # Garante que a libft seja compilada antes de linkar
+	@make -C $(MLX_DIR)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@mkdir -p $(dir $@) $(dir $(DEP_DIR)$*.d)
-	$(CC) $(CFLAGS) ${INCS} -c $< -o $@ -MF $(DEP_DIR)$*.d || { echo "Failed to create obj/dep"; exit 1;}
-	@echo "File $< compiled"
-
-$(LIBFT):
-	@echo "Building libft"
-	@$(MAKE) -s -C $(LIBFT_DIR) all
-
-$(MLX):
-	@echo "Building minilibx"
-	@$(MAKE) -s -C $(MLX_DIR) all
-
-$(NAME): $(OBJS) $(LIBFT) $(MLX)
-	@echo "Creating program"
-	$(CC) $(CFLAGS) ${INCS} $(OBJS) $(LIBFT) $(MLX) -o $@ || { echo "Failed to create program"; exit 1; }
-	@echo "Program compiled succesfully"
-
-valgrind: $(NAME)
-	valgrind $(VLGRIND) ./$(NAME)
-
-mlx:
-	@echo "Building minilibx"
-	@$(MAKE) -C $(MLX_DIR)
-
-libft:
-	@echo "Building libft"
-	@$(MAKE) -C $(LIBFT_DIR)
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	@if [ -d $(OBJ_DIR) ] || [ -d $(DEP_DIR) ]; then \
-		echo "Cleaning"; \
-		rm -rf $(OBJ_DIR) $(DEP_DIR); \
-		echo "Clean"; \
-	else \
-		echo "No objs or deps to clean"; \
-	fi
+	@make -C $(LIBFT_DIR) clean
+	@make -C $(MLX_DIR) clean
+	rm -f $(OBJS)
 
 fclean: clean
-	@rm -f $(NAME)
-	@$(MAKE) -s -C $(LIBFT_DIR) fclean
-	
+	@make -C $(LIBFT_DIR) fclean
+	rm -f $(NAME)
+
 re: fclean all
 
-.PHONY: all re clean fclean mlx libft
-
--include ${DEPS}
+.PHONY: all clean fclean re
