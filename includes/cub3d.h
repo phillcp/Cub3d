@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/10 18:37:21 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/10 19:16:01 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 // Includes da libft (assumimos que get_next_line está lá)
 # include "libft.h"
 # include "gnl.h"
+# include "mlx.h"
 # include "mlx_keys.h"
 
 // Constantes úteis
