@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 15:21:33 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/04 19:08:43 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/10 18:04:43 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ int main(int argc, char **argv)
     printf("EA texture: %s\n", game.ea_tex.path);
     printf("Floor color: %d\n", game.floor_color);
     printf("Ceiling color: %d\n", game.ceiling_color);
+
+	init_game(&game);
 
     free_game(&game);
     return (0);

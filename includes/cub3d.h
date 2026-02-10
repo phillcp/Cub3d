@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/04 18:37:23 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/10 18:37:21 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 // Includes da libft (assumimos que get_next_line está lá)
 # include "libft.h"
 # include "gnl.h"
+# include "mlx_keys.h"
 
 // Constantes úteis
 # define SCREEN_WIDTH 800
@@ -40,13 +41,28 @@
 # define KEY_LEFT 65361
 # define KEY_RIGHT 65363
 
+# define M_PI	3.141592653
+# define MOVE_SPEED	0.08
+# define TILE_SIZE 1
+
 // Estrutura para informações do jogador
+
+// norminette
+typedef struct s_pos
+{
+	double		x;
+	double		y;
+}	t_pos;
+
 typedef struct s_player
 {
+	t_pos	pos;
+	t_pos	delta;
     double  pos_x;      // Posição X no mapa
     double  pos_y;      // Posição Y no mapa
     double  dir_x;      // Vetor direção X
     double  dir_y;      // Vetor direção Y
+	float	orient;		// Orientaçao do player
     double  plane_x;    // Plano da câmera X
     double  plane_y;    // Plano da câmera Y
     double  move_speed; // Velocidade de movimento
@@ -109,5 +125,11 @@ void            exit_error(char *message);
 // utils/free.c
 void            free_game(t_game *game);
 void            ft_free_split(char **split);
+
+// game/init_game.c
+void			init_game(t_game *game);
+
+// game/3d.c
+void			draw3d(t_game *game);
 
 #endif
