@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 17:14:41 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/10 19:16:00 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/10 22:44:40 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	can_move(t_game *game, t_pos dest)
 
 	tile.x = dest.x / TILE_SIZE;
 	tile.y = dest.y / TILE_SIZE;
-	dest_tile = game->map.grid[tile.y][tile.x];
+	dest_tile = game->map.grid[(int)tile.y][(int)tile.x];
 	if (dest_tile != 1)
 	{
 		game->player.pos_x = dest.x;

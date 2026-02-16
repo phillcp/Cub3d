@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/10 19:16:01 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/10 21:35:13 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "gnl.h"
 # include "mlx.h"
 # include "mlx_keys.h"
+# include "image.h"
 
 // Constantes úteis
 # define SCREEN_WIDTH 800
@@ -96,6 +97,7 @@ typedef struct s_game
 {
     void        *mlx;           // Ponteiro MLX (para o futuro)
     void        *win;           // Ponteiro janela (para o futuro)
+	t_screen	screen;
     t_player    player;         // Dados do jogador
     t_map       map;            // Dados do mapa
     t_texture   no_tex;         // Textura Norte
