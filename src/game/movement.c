@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 17:14:41 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/10 19:16:00 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:49:24 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ static void	can_move(t_game *game, t_pos dest)
 
 	tile.x = dest.x / TILE_SIZE;
 	tile.y = dest.y / TILE_SIZE;
-	dest_tile = game->map.grid[tile.y][tile.x];
-	if (dest_tile != 1)
+	dest_tile = game->map.grid[(int)tile.y][(int)tile.x];
+	if (dest_tile != '1')
 	{
-		game->player.pos_x = dest.x;
-		game->player.pos_y = dest.y;
+		game->player.pos.x = dest.x;
+		game->player.pos.y = dest.y;
 	}
 }
 
@@ -54,25 +54,26 @@ void	move(t_game *game, int keycode)
 {
 	t_player	player;
 	t_pos		dest;
+	t_pos		delta;
 
 	player = game->player;
-	dest.x = player.pos_x;
-	dest.y = player.pos_y;
+	dest.x = player.pos.x;
+	dest.y = player.pos.y;
 	if (keycode == MLX_KEY_W)
 	{
-		dest.x = player.pos_x + player.dir_x;
-		dest.y = player.pos_y + player.dir_y;
+		dest.x = player.pos.x + player.dir_x;
+		dest.y = player.pos.y + player.dir_y;
 	}
 	else if (keycode == MLX_KEY_S)
 	{
-		dest.x = player.pos_x - player.dir_x;
-		dest.y = player.pos_y - player.dir_y;
+		dest.x = player.pos.x - player.dir_x;
+		dest.y = player.pos.y - player.dir_y;
 	}
 	else if (keycode == MLX_KEY_A || keycode == MLX_KEY_D)
 	{
-		dest = get_sideways_dest(player, keycode);
-		dest.x = player.pos_x + player.dir_x;
-		dest.y = player.pos_y + player.dir_y;
+		delta = get_sideways_dest(player, keycode);
+		dest.x = player.pos.x + delta.x;
+		dest.y = player.pos.y + delta.y;
 	}
 	can_move(game, dest);
 }

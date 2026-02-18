@@ -3,37 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/10 19:16:01 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:54:00 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-// Includes de bibliotecas padrão
 # include <stdlib.h>
 # include <stdio.h>
 # include <unistd.h>
 # include <fcntl.h>
 # include <string.h>
 # include <math.h>
+# include <sys/stat.h>
 
-// Includes da libft (assumimos que get_next_line está lá)
 # include "libft.h"
 # include "gnl.h"
 # include "mlx.h"
-# include "mlx_keys.h"
 
-// Constantes úteis
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 600
-# define MAP_CHAR "01NSEW "
+# define MAP_CHARS "01NSEW "
+# define PLAYER_CHARS "NSEW"
 # define RGB_MAX 255
+# define MOVE_SPEED 0.08
+# define ROT_SPEED 0.1
+# define TILE_SIZE 1
+# define FOV 60
 
-// Códigos de teclado (exemplos, podem variar)
 # define KEY_ESC 65307
 # define KEY_W 119
 # define KEY_A 97
@@ -42,95 +43,110 @@
 # define KEY_LEFT 65361
 # define KEY_RIGHT 65363
 
-# define M_PI	3.141592653
-# define MOVE_SPEED	0.08
-# define TILE_SIZE 1
+# define MLX_KEY_ESC 65307
+# define MLX_KEY_W 119
+# define MLX_KEY_A 97
+# define MLX_KEY_S 115
+# define MLX_KEY_D 100
+# define MLX_KEY_LEFT 65361
+# define MLX_KEY_RIGHT 65363
 
-// Estrutura para informações do jogador
-
-// norminette
 typedef struct s_pos
 {
-	double		x;
-	double		y;
+	double	x;
+	double	y;
 }	t_pos;
 
 typedef struct s_player
 {
 	t_pos	pos;
 	t_pos	delta;
-    double  pos_x;      // Posição X no mapa
-    double  pos_y;      // Posição Y no mapa
-    double  dir_x;      // Vetor direção X
-    double  dir_y;      // Vetor direção Y
-	float	orient;		// Orientaçao do player
-    double  plane_x;    // Plano da câmera X
-    double  plane_y;    // Plano da câmera Y
-    double  move_speed; // Velocidade de movimento
-    double  rot_speed;  // Velocidade de rotação
-}   t_player;
+	double	dir_x;
+	double	dir_y;
+	float	orient;
+	double	plane_x;
+	double	plane_y;
+}	t_player;
 
-// Estrutura para informações do mapa
 typedef struct s_map
 {
-    char    **grid;     // Grid 2D do mapa
-    int     width;      // Largura do mapa
-    int     height;     // Altura do mapa
-}   t_map;
+	char	**grid;
+	int		width;
+	int		height;
+}	t_map;
 
-// Estrutura para informações de textura (por enquanto, só o caminho)
 typedef struct s_texture
 {
-    char    *path;      // Caminho do arquivo .xpm
-    void    *img;       // Ponteiro para imagem MLX (para o futuro)
-    char    *addr;      // Endereço dos dados (para o futuro)
-    int     width;
-    int     height;
-    int     bpp;        // Bits per pixel
-    int     line_len;
-    int     endian;
-}   t_texture;
+	char	*path;
+	void	*img;
+	char	*addr;
+	int		width;
+	int		height;
+	int		bpp;
+	int		line_len;
+	int		endian;
+}	t_texture;
 
-// Estrutura principal que contém todos os dados do jogo
 typedef struct s_game
 {
-    void        *mlx;           // Ponteiro MLX (para o futuro)
-    void        *win;           // Ponteiro janela (para o futuro)
-    t_player    player;         // Dados do jogador
-    t_map       map;            // Dados do mapa
-    t_texture   no_tex;         // Textura Norte
-    t_texture   so_tex;         // Textura Sul
-    t_texture   we_tex;         // Textura Oeste
-    t_texture   ea_tex;         // Textura Leste
-    int         floor_color;    // Cor do chão (RGB)
-    int         ceiling_color;  // Cor do teto (RGB)
-}   t_game;
+	void		*mlx;
+	void		*win;
+	void		*img;
+	char		*img_addr;
+	int			img_bpp;
+	int			img_line_len;
+	int			img_endian;
+	t_player	player;
+	t_map		map;
+	t_texture	no_tex;
+	t_texture	so_tex;
+	t_texture	we_tex;
+	t_texture	ea_tex;
+	int			floor_color;
+	int			ceiling_color;
+}	t_game;
 
-// --- Protótipos de Funções ---
+/* main.c */
+int		main(int argc, char **argv);
 
-// main.c
-int             main(int argc, char **argv);
+/* parser/parse_file.c */
+int		parse_cub_file(t_game *game, char *filename);
 
-// parser/parse_file.c
-int             parse_cub_file(t_game *game, char *filename);
+/* parser/parse_textures.c */
+int		parse_texture(t_texture *tex, char *line, const char *id);
 
-// parser/parse_textures.c
-int             parse_texture(t_texture *texture, char *line, const char *identifier);
+/* parser/parse_colors.c */
+int		parse_color(int *color, char *line, const char *id);
 
-// parser/parse_colors.c
-int             parse_color(int *color, char *line, const char *identifier);
+/* parser/parse_map.c */
+int		parse_map(t_game *game, int fd, char *first_line);
+int		is_map_line(char *line);
 
-// utils/error.c
-void            exit_error(char *message);
+/* parser/validate_map.c */
+int		validate_map(t_game *game);
 
-// utils/free.c
-void            free_game(t_game *game);
-void            ft_free_split(char **split);
+/* parser/init_player.c */
+int		init_player_from_map(t_game *game);
 
-// game/init_game.c
-void			init_game(t_game *game);
+/* utils/error.c */
+void	exit_error(char *message);
 
-// game/3d.c
-void			draw3d(t_game *game);
+/* utils/free.c */
+void	free_game(t_game *game);
+void	ft_free_split(char **split);
+void	free_map_grid(char **grid, int height);
+
+/* game/init_game.c */
+void	init_game(t_game *game);
+
+/* game/3d.c */
+void	draw3d(t_game *game);
+
+/* game/movement.c */
+void	move(t_game *game, int keycode);
+void	rotate(t_game *game, int keycode);
+
+/* game/mlx_raper.c */
+void	my_mlx_put_image_to_window(t_game *game);
 
 #endif

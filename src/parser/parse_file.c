@@ -1,92 +1,127 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_file.c                                      :+:      :+:    :+:   */
+/*   parse_file.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:18:30 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/04 18:36:12 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:58:49 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-// Função auxiliar para remover espaços em branco no início e fim
-static char *trim_whitespace(char *str)
+static char	*trim_whitespace(char *str)
 {
-    char *end;
+	char	*end;
 
-    while ((*str == ' ' || *str == '\t'))
-        str++;
-    if (*str == 0)
-        return (str);
-    end = str + strlen(str) - 1;
-    while (end > str && (*end == ' ' || *end == '\t'))
-        end--;
-    *(end + 1) = '\0';
-    return (str);
+	while (*str == ' ' || *str == '\t')
+		str++;
+	if (*str == '\0')
+		return (str);
+	end = str + ft_strlen(str) - 1;
+	while (end > str && (*end == ' ' || *end == '\t' || *end == '\n'))
+		end--;
+	*(end + 1) = '\0';
+	return (str);
 }
 
-int parse_cub_file(t_game *game, char *filename)
+static int	parse_element(t_game *game, char *line)
 {
-    int     fd;
-    char    *line;
-    int     ret;
+	if (ft_strncmp(line, "NO ", 3) == 0)
+		return (parse_texture(&game->no_tex, line, "NO"));
+	else if (ft_strncmp(line, "SO ", 3) == 0)
+		return (parse_texture(&game->so_tex, line, "SO"));
+	else if (ft_strncmp(line, "WE ", 3) == 0)
+		return (parse_texture(&game->we_tex, line, "WE"));
+	else if (ft_strncmp(line, "EA ", 3) == 0)
+		return (parse_texture(&game->ea_tex, line, "EA"));
+	else if (ft_strncmp(line, "F ", 2) == 0)
+		return (parse_color(&game->floor_color, line, "F"));
+	else if (ft_strncmp(line, "C ", 2) == 0)
+		return (parse_color(&game->ceiling_color, line, "C"));
+	return (-1);
+}
 
-    // 1. Verificar extensão do arquivo
-    if (ft_strncmp(filename + ft_strlen(filename) - 4, ".cub", 4) != 0)
-        return (exit_error("Invalid file extension. Must be .cub"), 0);
+static int	all_elements_parsed(t_game *game)
+{
+	if (!game->no_tex.path || !game->so_tex.path)
+		return (0);
+	if (!game->we_tex.path || !game->ea_tex.path)
+		return (0);
+	if (game->floor_color == -1 || game->ceiling_color == -1)
+		return (0);
+	return (1);
+}
 
-    // 2. Abrir o arquivo
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-        return (exit_error("Could not open file."), 0);
+static int	parse_elements_and_map(t_game *game, int fd)
+{
+	char	*line;
+	char	*trimmed;
+	int		ret;
 
-    // 3. Ler linha por linha
-    while (get_next_line(fd, &line) > 0)
-    {
-        char *trimmed_line = trim_whitespace(line);
+	line = NULL;
+	while (get_next_line(fd, &line) > 0)
+	{
+		if (!all_elements_parsed(game))
+		{
+			trimmed = trim_whitespace(line);
+			if (ft_strlen(trimmed) == 0)
+			{
+				free(line);
+				line = NULL;
+				continue ;
+			}
+			ret = parse_element(game, trimmed);
+			if (ret == 0)
+				return (free(line), 0);
+			if (ret == -1)
+				return (free(line), exit_error("Invalid element in file"), 0);
+			free(line);
+			continue ;
+		}
+		if (ft_strlen(line) == 0 || (ft_strlen(line) == 1 && line[0] == '\n'))
+		{
+			free(line);
+			line = NULL;
+			continue ;
+		}
+		trimmed = ft_strdup(line);
+		free(line);
+		if (!trimmed)
+			return (exit_error("Memory allocation failed"), 0);
+		if (!parse_map(game, fd, trimmed))
+			return (0);
+		return (1);
+	}
+	if (line)
+		free(line);
+	if (!all_elements_parsed(game))
+		return (exit_error("Missing texture or color element"), 0);
+	return (exit_error("Map not found in file"), 0);
+}
 
-        // Pular linhas vazias
-        if (strlen(trimmed_line) == 0)
-        {
-            free(line);
-            continue;
-        }
+int	parse_cub_file(t_game *game, char *filename)
+{
+	int		fd;
+	int		len;
 
-        // Identificar o elemento e chamar o parser correspondente
-        if (ft_strncmp(trimmed_line, "NO ", 3) == 0)
-            ret = parse_texture(&game->no_tex, trimmed_line, "NO");
-        else if (ft_strncmp(trimmed_line, "SO ", 3) == 0)
-            ret = parse_texture(&game->so_tex, trimmed_line, "SO");
-        else if (ft_strncmp(trimmed_line, "WE ", 3) == 0)
-            ret = parse_texture(&game->we_tex, trimmed_line, "WE");
-        else if (ft_strncmp(trimmed_line, "EA ", 3) == 0)
-            ret = parse_texture(&game->ea_tex, trimmed_line, "EA");
-        else if (ft_strncmp(trimmed_line, "F ", 2) == 0)
-            ret = parse_color(&game->floor_color, trimmed_line, "F");
-        else if (ft_strncmp(trimmed_line, "C ", 2) == 0)
-            ret = parse_color(&game->ceiling_color, trimmed_line, "C");
-        else
-        {
-            // Por enquanto, vamos considerar qualquer outra coisa como erro.
-            // O parsing do mapa virá depois.
-            free(line);
-            return (exit_error("Invalid element in .cub file."), 0);
-        }
-
-        free(line);
-        if (!ret)
-            return (0); // O erro já foi impresso pela função de parsing
-    }
-    close(fd);
-
-    // 4. Validação final (básica por enquanto)
-    if (!game->no_tex.path || !game->so_tex.path || !game->we_tex.path || !game->ea_tex.path)
-        return (exit_error("Missing one or more texture paths."), 0);
-    if (game->floor_color == -1 || game->ceiling_color == -1)
-        return (exit_error("Missing floor or ceiling color."), 0);
-
-    return (1); // Sucesso
+	len = ft_strlen(filename);
+	if (len < 4 || ft_strncmp(filename + len - 4, ".cub", 4) != 0)
+		return (exit_error("Invalid file extension. Must be .cub"), 0);
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		return (exit_error("Could not open file"), 0);
+	if (!parse_elements_and_map(game, fd))
+	{
+		close(fd);
+		return (0);
+	}
+	close(fd);
+	if (!validate_map(game))
+		return (0);
+	if (!init_player_from_map(game))
+		return (0);
+	return (1);
 }
