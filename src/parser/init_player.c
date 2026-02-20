@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_player.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:39:36 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/18 17:39:49 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:48:16 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 static float	get_orient(char c)
 {
 	if (c == 'N')
-		return (M_PI / 2);
+		return (PI / 2);
 	if (c == 'S')
-		return (3 * M_PI / 2);
+		return (3 * PI / 2);
 	if (c == 'E')
 		return (0);
 	if (c == 'W')
-		return (M_PI);
+		return (PI);
 	return (0);
 }
 

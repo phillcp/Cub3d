@@ -6,14 +6,13 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 21:32:35 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:17:53 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:45:50 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef IMAGE_H
 # define IMAGE_H
 
-// # define FOV 1.5708
 # define TEXTURE_SIZE	64
 # define MINIMAP_TILE_SIZE 10
 

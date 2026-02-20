@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/20 06:16:19 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/20 07:00:44 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 # define MOVE_SPEED 0.08
 # define ROT_SPEED 0.1
 # define TILE_SIZE 1
-# define FOV 60
+# define FOV 1.5708
 # define PI 3.141592653
 
 # define KEY_ESC 65307
@@ -93,8 +93,8 @@ typedef struct s_texture
 typedef struct s_game
 {
 	void		*mlx;
+	t_screen	*screen;
 	void		*win;
-	t_screen	screen;
 	void		*img;
 	char		*img_addr;
 	int			img_bpp;
@@ -106,8 +106,8 @@ typedef struct s_game
 	t_texture	so_tex;
 	t_texture	we_tex;
 	t_texture	ea_tex;
-	int			floor_color;
-	int			ceiling_color;
+	u_int32_t	floor_color;
+	u_int32_t	ceiling_color;
 }	t_game;
 
 /* main.c */
@@ -145,6 +145,10 @@ void	init_game(t_game *game);
 
 /* game/3d.c */
 void	draw3d(t_game *game);
+void	pixel_put(t_img *img, int x, int y, u_int32_t color);
+
+/* game/2d.c */
+void	draw2d(t_game *game);
 
 /* game/movement.c */
 void	move(t_game *game, int keycode);
