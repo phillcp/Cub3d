@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:17:22 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:50:45 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,11 @@ void	pixel_put(t_img *img, int x, int y, u_int32_t color)
 {
 	char	*dst;
 
-	if (!img)
-		err_exit("NULL img @my_mlx_pixel_put", NULL);
 	dst = img->addr + (y * img->line_len + x * (img->bpp / 8));
 	*(u_int32_t *)dst = color;
 }
 
-void	pixel_put_tex(t_img *img, int x, int y, int color)
+static void	pixel_put_tex(t_img *img, int x, int y, int color)
 {
 	char	*dst;
 
@@ -39,17 +37,17 @@ static void	draw_bg(t_game *game, int f_color, int c_color)
 	int	y;
 
 	y = 0;
-	while (y < (game->screen.height / 2))
+	while (y < (game->screen->height / 2))
 	{
 		x = -1;
-		while (++x < game->screen.width)
-			pixel_put(game->screen.img, x, y, c_color);
+		while (++x < game->screen->width)
+			pixel_put(game->screen->img, x, y, c_color);
 		++y;
 	}
-	while (y < game->screen.height)
+	while (y < game->screen->height)
 	{
-		while (++x < game->screen.width)
-			pixel_put(game->screen.img, x, y, f_color);
+		while (++x < game->screen->width)
+			pixel_put(game->screen->img, x, y, f_color);
 		++y;
 	}
 }
@@ -69,15 +67,18 @@ static void	draw_walls(t_game *game, t_pos pos)
 		angle = fmod(angle + (2 * PI), 2 * PI);
 		check = check_wall(game, pos, angle);
 		j = -1;
-		while (++j < SCREEN_HEIGHT)
+		while (++j < SCREEN_HEIGHT && j < check->lh + check->lo)
 		{
 			k = -1;
 			while (++k < 1)
-			{
-
-			}
+				pixel_put_tex(game->screen->img, i + k, j,
+					check->texture[(int)check->tex.y][(int)(check->tex.x)]);
+			check->tex.y += TEXTURE_SIZE / (double)check->lh;
+			if (check->tex.y >= TEXTURE_SIZE)
+					check->tex.y = TEXTURE_SIZE - 1;
 		}
 	}
+	free(check);
 }
 
 void	draw3d(t_game *game)
