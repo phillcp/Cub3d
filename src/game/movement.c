@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   movement.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 17:14:41 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/18 17:49:24 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:17:06 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ static t_pos	get_sideways_dest(t_player player, int keycode)
 	orient = player.orient;
 	if (keycode == MLX_KEY_A)
 	{
-		orient += M_PI / 2;
-		if (orient > 2 * M_PI)
-			orient -= 2 * M_PI;
+		orient += PI / 2;
+		if (orient > 2 * PI)
+			orient -= 2 * PI;
 	}
 	else if (keycode == MLX_KEY_D)
 	{
-		orient -= M_PI / 2;
+		orient -= PI / 2;
 		if (orient < 0)
-			orient += 2 * M_PI;
+			orient += 2 * PI;
 	}
 	delta.x = cos(orient) * MOVE_SPEED;
 	delta.y = -sin(orient) * MOVE_SPEED;
@@ -88,14 +88,14 @@ void	rotate(t_game *game, int keycode)
 	if (keycode == MLX_KEY_LEFT)
 	{
 		*orient += 0.1;
-		if (*orient > 2 * M_PI)
-			*orient -= 2 * M_PI;
+		if (*orient > 2 * PI)
+			*orient -= 2 * PI;
 	}
 	else if (keycode == MLX_KEY_RIGHT)
 	{
 		*orient -= 0.1;
 		if (*orient < 0)
-			*orient += 2 * M_PI;
+			*orient += 2 * PI;
 	}
 	delta->x = cos(*orient) * MOVE_SPEED;
 	delta->y = -sin(*orient) * MOVE_SPEED;

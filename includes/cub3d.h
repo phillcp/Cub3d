@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/18 17:54:00 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:16:19 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include "libft.h"
 # include "gnl.h"
 # include "mlx.h"
+# include "mlx_keys.h"
+# include "image.h"
 
 # define SCREEN_WIDTH 800
 # define SCREEN_HEIGHT 600
@@ -34,6 +36,7 @@
 # define ROT_SPEED 0.1
 # define TILE_SIZE 1
 # define FOV 60
+# define PI 3.141592653
 
 # define KEY_ESC 65307
 # define KEY_W 119
@@ -91,6 +94,7 @@ typedef struct s_game
 {
 	void		*mlx;
 	void		*win;
+	t_screen	screen;
 	void		*img;
 	char		*img_addr;
 	int			img_bpp;

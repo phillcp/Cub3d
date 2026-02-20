@@ -12,3 +12,4 @@ sudo apt-get update && sudo apt-get install xorg libxext-dev zlib1g-dev libbsd-d
 You can compile the program by running "make" in the project's root folder and to run it just type "./bin/cub3d *mapname.cub*" or "bash bin/cub3d *mapname.cub*".
 
 Resources:
+www.youtube.com/watch?v=gYRrGTC7GtA
