@@ -6,55 +6,55 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:19:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/04 18:19:32 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:37:49 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include <sys/stat.h> // Para a função stat
 
-int parse_texture(t_texture *texture, char *line, const char *identifier)
+static int	validate_path(char *path)
 {
-    char    **split;
-    char    *path;
-    struct stat   statbuf;
+	struct stat	statbuf;
+	int			len;
 
-    // 1. Verificar se o identificador corresponde
-    if (ft_strncmp(line, identifier, ft_strlen(identifier)) != 0)
-        return (0);
+	len = ft_strlen(path);
+	if (len < 4 || ft_strncmp(path + len - 4, ".xpm", 4) != 0)
+	{
+		free(path);
+		return (exit_error("Texture file must be .xpm"), 0);
+	}
+	if (stat(path, &statbuf) != 0)
+	{
+		free(path);
+		return (exit_error("Texture file not found"), 0);
+	}
+	return (1);
+}
 
-    // 2. Separar a linha para obter o caminho
-    split = ft_split(line, ' ');
-    if (!split || !split[0] || !split[1] || split[2])
-    {
-        if (split) ft_free_split(split);
-        return (exit_error("Invalid texture format."), 0);
-    }
+int	parse_texture(t_texture *tex, char *line, const char *id)
+{
+	char	**split;
+	char	*path;
 
-    path = ft_strtrim(split[1], "\n");
-    ft_free_split(split);
-
-    // 3. Validar o caminho
-    // Verificar se a extensão é .xpm
-    if (ft_strncmp(path + ft_strlen(path) - 4, ".xpm", 4) != 0)
-    {
-        free(path);
-        return (exit_error("Texture file must be a .xpm file."), 0);
-    }
-    // Verificar se o arquivo existe e é legível
-    if (stat(path, &statbuf) != 0)
-    {
-        free(path);
-        return (exit_error("Texture file not found or inaccessible."), 0);
-    }
-
-    // 4. Armazenar o caminho validado na estrutura
-    if (texture->path) // Se já foi carregado, é um erro
-    {
-        free(path);
-        return (exit_error("Duplicate texture identifier."), 0);
-    }
-    texture->path = path;
-    
-    return (1);
+	if (ft_strncmp(line, id, ft_strlen(id)) != 0)
+		return (0);
+	split = ft_split(line, ' ');
+	if (!split || !split[0] || !split[1] || split[2])
+	{
+		ft_free_split(split);
+		return (exit_error("Invalid texture format"), 0);
+	}
+	path = ft_strtrim(split[1], "\n");
+	ft_free_split(split);
+	if (!path)
+		return (exit_error("Memory allocation failed"), 0);
+	if (!validate_path(path))
+		return (0);
+	if (tex->path)
+	{
+		free(path);
+		return (exit_error("Duplicate texture identifier"), 0);
+	}
+	tex->path = path;
+	return (1);
 }

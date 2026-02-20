@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/10 22:28:43 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/02/20 06:17:22 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static void	draw_walls(t_game *game, t_pos pos)
 	while (++i < SCREEN_WIDTH)
 	{
 		angle = (i * FOV / SCREEN_WIDTH) - FOV / 2;
-		angle = fmod(angle + (2 * M_PI), 2 * M_PI);
+		angle = fmod(angle + (2 * PI), 2 * PI);
 		check = check_wall(game, pos, angle);
 		j = -1;
 		while (++j < SCREEN_HEIGHT)
@@ -85,5 +85,5 @@ void	draw3d(t_game *game)
 	draw_bg(game, game->floor_color, game->ceiling_color);
 	draw_walls(game, game->player.pos);
 	draw2d(game);
-	raper_mlx_put_image_to_window(game);
+	my_mlx_put_image_to_window(game);
 }

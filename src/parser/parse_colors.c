@@ -6,58 +6,61 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:20:19 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/04 18:20:20 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:38:25 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static int is_valid_rgb(int r, int g, int b)
+static int	is_valid_rgb(int r, int g, int b)
 {
-    return (r >= 0 && r <= RGB_MAX && g >= 0 && g <= RGB_MAX && b >= 0 && b <= RGB_MAX);
+	if (r < 0 || r > RGB_MAX)
+		return (0);
+	if (g < 0 || g > RGB_MAX)
+		return (0);
+	if (b < 0 || b > RGB_MAX)
+		return (0);
+	return (1);
 }
 
-int parse_color(int *color, char *line, const char *identifier)
+static int	extract_rgb(char **rgb, int *r, int *g, int *b)
 {
-    char    **split;
-    char    **rgb_split;
-    int     r, g, b;
+	if (!rgb || !rgb[0] || !rgb[1] || !rgb[2] || rgb[3])
+	{
+		ft_free_split(rgb);
+		return (exit_error("Color needs 3 RGB values"), 0);
+	}
+	*r = ft_atoi(rgb[0]);
+	*g = ft_atoi(rgb[1]);
+	*b = ft_atoi(rgb[2]);
+	ft_free_split(rgb);
+	if (!is_valid_rgb(*r, *g, *b))
+		return (exit_error("RGB values must be 0-255"), 0);
+	return (1);
+}
 
-    // 1. Verificar se o identificador corresponde
-    if (ft_strncmp(line, identifier, ft_strlen(identifier)) != 0)
-        return (0);
+int	parse_color(int *color, char *line, const char *id)
+{
+	char	**split;
+	char	**rgb;
+	int		r;
+	int		g;
+	int		b;
 
-    // 2. Separar a linha para obter os valores RGB
-    split = ft_split(line, ' ');
-    if (!split || !split[0] || !split[1] || split[2])
-    {
-        if (split) ft_free_split(split);
-        return (exit_error("Invalid color format."), 0);
-    }
-
-    rgb_split = ft_split(split[1], ',');
-    ft_free_split(split);
-
-    if (!rgb_split || !rgb_split[0] || !rgb_split[1] || !rgb_split[2] || rgb_split[3])
-    {
-        if (rgb_split) ft_free_split(rgb_split);
-        return (exit_error("Color must have 3 RGB components separated by commas."), 0);
-    }
-
-    // 3. Converter para inteiros e validar
-    r = ft_atoi(rgb_split[0]);
-    g = ft_atoi(rgb_split[1]);
-    b = ft_atoi(rgb_split[2]);
-    ft_free_split(rgb_split);
-
-    if (!is_valid_rgb(r, g, b))
-        return (exit_error("RGB values must be between 0 and 255."), 0);
-
-    // 4. Armazenar a cor no formato inteiro (0x00RRGGBB)
-    if (*color != -1) // Verificar duplicata
-        return (exit_error("Duplicate color identifier."), 0);
-    
-    *color = (r << 16) | (g << 8) | b;
-    
-    return (1);
+	if (ft_strncmp(line, id, ft_strlen(id)) != 0)
+		return (0);
+	split = ft_split(line, ' ');
+	if (!split || !split[0] || !split[1] || split[2])
+	{
+		ft_free_split(split);
+		return (exit_error("Invalid color format"), 0);
+	}
+	rgb = ft_split(split[1], ',');
+	ft_free_split(split);
+	if (!extract_rgb(rgb, &r, &g, &b))
+		return (0);
+	if (*color != -1)
+		return (exit_error("Duplicate color identifier"), 0);
+	*color = (r << 16) | (g << 8) | b;
+	return (1);
 }

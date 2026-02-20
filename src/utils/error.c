@@ -6,14 +6,14 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:22:14 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/04 18:22:15 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/02/18 17:40:14 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void exit_error(char *message)
+void	exit_error(char *message)
 {
-    ft_putendl_fd("Error", 2);
-    ft_putendl_fd(message, 2);
+	ft_putendl_fd("Error", 2);
+	ft_putendl_fd(message, 2);
 }
