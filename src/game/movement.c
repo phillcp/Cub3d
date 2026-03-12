@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 17:14:41 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:17:06 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 21:25:49 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,23 +80,18 @@ void	move(t_game *game, int keycode)
 
 void	rotate(t_game *game, int keycode)
 {
-	float	*orient;
-	t_pos	*delta;
-
-	orient = &game->player.orient;
-	delta = &game->player.delta;
 	if (keycode == MLX_KEY_LEFT)
 	{
-		*orient += 0.1;
-		if (*orient > 2 * PI)
-			*orient -= 2 * PI;
+		game->player.orient += ROT_SPEED;
+		if (game->player.orient > 2 * PI)
+			game->player.orient -= 2 * PI;
 	}
 	else if (keycode == MLX_KEY_RIGHT)
 	{
-		*orient -= 0.1;
-		if (*orient < 0)
-			*orient += 2 * PI;
+		game->player.orient -= ROT_SPEED;
+		if (game->player.orient < 0)
+			game->player.orient += 2 * PI;
 	}
-	delta->x = cos(*orient) * MOVE_SPEED;
-	delta->y = -sin(*orient) * MOVE_SPEED;
+	game->player.delta.x = cos(game->player.orient) * MOVE_SPEED;
+	game->player.delta.y = -sin(game->player.orient) * MOVE_SPEED;
 }

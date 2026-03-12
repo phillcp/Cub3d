@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_game.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 16:46:38 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/18 17:48:50 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/03/12 20:55:36 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,9 @@ static int	close_handler(void *param)
 	return (0);
 }
 
-static int	loop_handler(void *param)
+static void	loop_handler(void *param)
 {
-	draw3d((t_game *)param);
-	return (0);
+	draw_3d((t_game *)param);
 }
 
 int	key_handler(int keycode, void *param)
@@ -52,5 +51,7 @@ void	init_game(t_game *game)
 {
 	mlx_hook(game->win, 17, (1L << 17), close_handler, game);
 	mlx_key_hook(game->win, key_handler, game);
+	mlx_do_key_autorepeaton(game->mlx);
 	mlx_loop_hook(game->mlx, loop_handler, game);
+	mlx_loop(game->mlx);
 }

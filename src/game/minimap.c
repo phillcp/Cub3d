@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   2d.c                                               :+:      :+:    :+:   */
+/*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 06:21:59 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:49:13 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 21:01:57 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,35 @@ static u_int32_t	pick_color(char map_tile)
 	return (color);
 }
 
-static void	draw_player(int x, int y, t_screen *s)
+void	draw_circle(t_img *img, int xo, int yo, u_int32_t	color)
 {
-	draw_circle2(s->img, s->width - x * MINIMAP_TILE_SIZE + MINIMAP_TILE_SIZE
-		/ 2, y * MINIMAP_TILE_SIZE
-		+ MINIMAP_TILE_SIZE / 2, create_trgb(255, 0, 0, 255));
+	int	radius;
+	int	x;
+	int	y;
+
+	radius = CIRCLE_RADIUS;
+	y = -radius;
+	while (y <= radius)
+	{
+		x = -radius;
+		while (x <= radius)
+		{
+			if (pow(x, 2) + pow(y, 2) - radius < 0)
+				pixel_put(img, x + xo, y + yo, color);
+			x++;
+		}
+		y++;
+	}
 }
 
-static void	draw_square(int x, int y, int color, t_screen *s)
+static void	draw_player(int x, int y, t_game *g)
+{
+	draw_circle2(g->img, SCREEN_WIDTH - x * MINIMAP_TILE_SIZE +
+		MINIMAP_TILE_SIZE / 2, y * MINIMAP_TILE_SIZE
+		+ MINIMAP_TILE_SIZE / 2, create_trgb(255, 0, 255, 0));
+}
+
+static void	draw_square(int x, int y, int color, t_game *g)
 {
 	int	k;
 	int	l;
@@ -50,17 +71,17 @@ static void	draw_square(int x, int y, int color, t_screen *s)
 		l = -1;
 		while (++l < MINIMAP_TILE_SIZE)
 		{
-			if (s->width - x * MINIMAP_TILE_SIZE + k >= 0
-				&& s->width - x * MINIMAP_TILE_SIZE + k < s->width
+			if (SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k >= 0
+				&& SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k < SCREEN_WIDTH
 				&& y * MINIMAP_TILE_SIZE + l >= 0
-				&& y * MINIMAP_TILE_SIZE + l < (int)s->height)
-				pixel_put(s->img, s->width - x * MINIMAP_TILE_SIZE + k,
+				&& y * MINIMAP_TILE_SIZE + l < SCREEN_HEIGHT)
+				pixel_put(g->img, SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k,
 					y * MINIMAP_TILE_SIZE + l, color);
 		}
 	}
 }
 
-static void	render_map(t_game *game)
+void	draw_minimap(t_game *game)
 {
 	int			j;
 	int			i;
@@ -73,14 +94,9 @@ static void	render_map(t_game *game)
 		while (++j <= game->map.width)
 		{
 			c = pick_color(game->map.grid[i][game->map.width - j]);
-			draw_square(j, i, c, game->screen);
+			draw_square(j, i, c, game);
 		}
 	}
 	draw_player((game->map.width - (int)game->player.pos.x),
-		(int)game->player.pos.y, game->screen);
-}
-
-void	draw2d(t_game *game)
-{
-	render_map(game);
+		(int)game->player.pos.y, game);
 }
