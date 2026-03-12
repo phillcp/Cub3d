@@ -6,13 +6,13 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 22:26:14 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 09:04:52 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 21:54:11 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-float	dist_3d(float ax, float ay, float bx, float by)
+static float	dist_3d(float ax, float ay, float bx, float by)
 {
 	double	ret;
 
@@ -20,7 +20,7 @@ float	dist_3d(float ax, float ay, float bx, float by)
 	return (ret);
 }
 
-double	h_check(t_map map, double ang, t_ray *h, t_pos pos)
+static double	h_check(t_map map, double ang, t_ray *h, t_pos pos)
 {
 	h->off.x = 0;
 	h->off.y = 0;
@@ -49,7 +49,7 @@ double	h_check(t_map map, double ang, t_ray *h, t_pos pos)
 	return (h->z = -1);
 }
 
-double	v_check(t_map map, double ang, t_ray *v, t_pos pos)
+static double	v_check(t_map map, double ang, t_ray *v, t_pos pos)
 {
 	v->off.y = 0;
 	if (ang < (PI / 2) || ang > (3 * PI / 2))
@@ -77,25 +77,25 @@ double	v_check(t_map map, double ang, t_ray *v, t_pos pos)
 	return (v->z = -1);
 }
 
-void	aux(double ang, t_ray *hv, t_game *g, t_ray *check)
+static void	aux(double ang, t_ray *hv, t_game *g, t_ray *check)
 {
 	if ((hv[0].z < hv[1].z && hv[0].z > 0.0) || hv[1].z < 0)
 	{
 		*check = hv[0];
 		check->tex.x = (check->rx - (int)check->rx) * TEXTURE_SIZE;
-		check->texture = g->so_tex;
+		check->texture = g->so_tex.tex;
 		if (ang > PI)
 			check->tex.x = TEXTURE_SIZE - check->tex.x - 1;
 		else
-			check->texture = g->no_tex;
+			check->texture = g->no_tex.tex;
 	}
 	else
 	{
 		*check = hv[1];
 		check->tex.x = (check->ry - (int)check->ry) * TEXTURE_SIZE;
-		check->texture = g->we_tex;
+		check->texture = g->we_tex.tex;
 		if (ang > (PI / 2) && ang < (3 * PI / 2))
-			check->texture = g->ea_tex;
+			check->texture = g->ea_tex.tex;
 		else
 			check->tex.x = TEXTURE_SIZE - check->tex.x - 1;
 	}
@@ -113,10 +113,10 @@ t_ray	*check_wall(t_game *g, t_pos pos, double ang, float pa)
 	v_check(g->map, ang, &hv[1], pos);
 	aux(ang, hv, g, check);
 	check->z = check->z * cos(fmod(pa - ang + 2 * PI, 2 * PI));
-	check->lh = (double)g->screen->height / check->z;
-	check->lo = ((double)g->screen->height - check->lh) / 2;
+	check->lh = (double)SCREEN_HEIGHT / check->z;
+	check->lo = ((double)SCREEN_HEIGHT - check->lh) / 2;
 	if (check->lo < 0)
-		check->texoff = (check->lh - g->screen->height) / 2.0;
+		check->texoff = (check->lh - SCREEN_HEIGHT) / 2.0;
 	if (check->lo < 0)
 		check->lo = 0;
 	check->tex.y = check->texoff * (TEXTURE_SIZE / (double)check->lh);

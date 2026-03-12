@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:50:45 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 20:55:13 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,22 @@ static void	draw_bg(t_game *game, int f_color, int c_color)
 	int	y;
 
 	y = 0;
-	while (y < (game->screen->height / 2))
+	while (y < (SCREEN_HEIGHT / 2))
 	{
 		x = -1;
-		while (++x < game->screen->width)
-			pixel_put(game->screen->img, x, y, c_color);
+		while (++x < SCREEN_WIDTH)
+			pixel_put(game->img, x, y, c_color);
 		++y;
 	}
-	while (y < game->screen->height)
+	while (y < SCREEN_HEIGHT)
 	{
-		while (++x < game->screen->width)
-			pixel_put(game->screen->img, x, y, f_color);
+		while (++x < SCREEN_WIDTH)
+			pixel_put(game->img, x, y, f_color);
 		++y;
 	}
 }
 
-static void	draw_walls(t_game *game, t_pos pos)
+static void	draw_walls(t_game *game, t_pos pos, float pa)
 {
 	t_ray	*check;
 	double	angle;
@@ -65,13 +65,13 @@ static void	draw_walls(t_game *game, t_pos pos)
 	{
 		angle = (i * FOV / SCREEN_WIDTH) - FOV / 2;
 		angle = fmod(angle + (2 * PI), 2 * PI);
-		check = check_wall(game, pos, angle);
+		check = check_wall(game, pos, angle, pa);
 		j = -1;
 		while (++j < SCREEN_HEIGHT && j < check->lh + check->lo)
 		{
 			k = -1;
 			while (++k < 1)
-				pixel_put_tex(game->screen->img, i + k, j,
+				pixel_put_tex(game->img, i + k, j,
 					check->texture[(int)check->tex.y][(int)(check->tex.x)]);
 			check->tex.y += TEXTURE_SIZE / (double)check->lh;
 			if (check->tex.y >= TEXTURE_SIZE)
@@ -81,10 +81,24 @@ static void	draw_walls(t_game *game, t_pos pos)
 	free(check);
 }
 
-void	draw3d(t_game *game)
+float	fix_angle(float pa)
 {
+	if (pa < PI)
+		pa = (PI / 2) - (pa - (PI / 2));
+	else if (pa < (3 * PI / 2))
+		pa = 2 * PI - (pa - PI);
+	else
+		pa = PI + (2 * PI - pa);
+	return (pa);
+}
+
+void	draw_3d(t_game *game)
+{
+	float		pa;
+
+	pa = fix_angle(game->player.orient);
 	draw_bg(game, game->floor_color, game->ceiling_color);
-	draw_walls(game, game->player.pos);
-	draw2d(game);
-	my_mlx_put_image_to_window(game);
+	draw_walls(game, game->player.pos, pa);
+	draw_minimap(game);
+	mlx_put_image_to_window(game->mlx, game->win, game->img->img, 0, 0);
 }

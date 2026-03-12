@@ -26,136 +26,78 @@ static char	map_at(t_map *map, int x, int y)
 	return (map->grid[y][x]);
 }
 
-static int	check_allowed_and_count_players(t_game *game, int *player_count)
+static void check_player_count(t_game *game)
 {
 	int		y;
 	int		x;
-	char	c;
+	int		p_count;
 
-	*player_count = 0;
+	p_count = 0;
 	y = 0;
 	while (y < game->map.height)
 	{
 		x = 0;
 		while (game->map.grid[y][x])
 		{
-			c = game->map.grid[y][x];
-			if (!ft_strchr(MAP_CHARS, c) && !ft_strchr(PLAYER_CHARS, c))
-				return (exit_error("Invalid character in map"), 0);
-			if (ft_strchr(PLAYER_CHARS, c))
-				(*player_count)++;
-			x++;
-		}
-		y++;
-	}
-	return (1);
-}
-
-static int	check_enclosed(t_game *game)
-{
-	int		w;
-	int		h;
-	int		size;
-	int		*queue_x;
-	int		*queue_y;
-	int		front;
-	int		rear;
-	char	*visited;
-	int		x;
-	int		y;
-	char	c;
-
-	w = game->map.width;
-	h = game->map.height;
-	size = w * h;
-	queue_x = malloc(sizeof(int) * size);
-	queue_y = malloc(sizeof(int) * size);
-	visited = ft_calloc(size, sizeof(char));
-	if (!queue_x || !queue_y || !visited)
-		return (exit_error("Memory allocation failed"), 0);
-	front = 0;
-	rear = 0;
-	/* enqueue boundary cells that are not walls */
-	y = 0;
-	while (y < h)
-	{
-		x = 0;
-		while (x < w)
-		{
-			if (y == 0 || y == h - 1 || x == 0 || x == w - 1)
+			if (ft_strchr(PLAYER_CHARS, game->map.grid[y][x]))
 			{
-				c = map_at(&game->map, x, y);
-				if (c != '1')
-				{
-					queue_x[rear] = x;
-					queue_y[rear] = y;
-					rear++;
-					visited[y * w + x] = 1;
-				}
+				if (p_count)
+					exit_error(game, "Map must only have one player");
+				p_count = 1;
+				init_player_from_map(game, x, y);
 			}
 			x++;
 		}
 		y++;
 	}
-	while (front < rear)
-	{
-		x = queue_x[front];
-		y = queue_y[front];
-		front++;
-		c = map_at(&game->map, x, y);
-		if (c == '0' || ft_strchr(PLAYER_CHARS, c))
-		{
-			free(queue_x);
-			free(queue_y);
-			free(visited);
-			return (exit_error("Map is not closed"), 0);
-		}
-		if (x > 0 && !visited[y * w + (x - 1)] && map_at(&game->map, x - 1, y) != '1')
-		{
-			queue_x[rear] = x - 1;
-			queue_y[rear] = y;
-			rear++;
-			visited[y * w + (x - 1)] = 1;
-		}
-		if (x + 1 < w && !visited[y * w + (x + 1)] && map_at(&game->map, x + 1, y) != '1')
-		{
-			queue_x[rear] = x + 1;
-			queue_y[rear] = y;
-			rear++;
-			visited[y * w + (x + 1)] = 1;
-		}
-		if (y > 0 && !visited[(y - 1) * w + x] && map_at(&game->map, x, y - 1) != '1')
-		{
-			queue_x[rear] = x;
-			queue_y[rear] = y - 1;
-			rear++;
-			visited[(y - 1) * w + x] = 1;
-		}
-		if (y + 1 < h && !visited[(y + 1) * w + x] && map_at(&game->map, x, y + 1) != '1')
-		{
-			queue_x[rear] = x;
-			queue_y[rear] = y + 1;
-			rear++;
-			visited[(y + 1) * w + x] = 1;
-		}
-	}
-	free(queue_x);
-	free(queue_y);
-	free(visited);
 	return (1);
 }
 
-int	validate_map(t_game *game)
+int	check_surroundings(t_map map, int row, int column)
 {
-	int	player_count;
+	if (map.grid[row][column - 1] == ' '
+		|| map.grid[row][column + 1] == ' '
+		|| map.grid[row - 1][column] == ' '
+		|| map.grid[row + 1][column] == ' ')
+		return (0);
+	else
+		return (1);
+}
 
+int	check_enclosed(t_map map)
+{
+	int		row;
+	int		column;
+	int		row_start;
+	int		col_start;
+
+	row = -1;
+	row_start = 0;
+	col_start = 0;
+	while (++row < map.height)
+	{
+		column = -1;
+		while (map.grid[row][++column] != '\0')
+		{
+			if (map.grid[row][column] == '0')
+			{
+				if (row == 0 || row == map.height -1
+					|| column == 0 || column == map.width - 1)
+					return (0);
+				if (!check_surroundings(map, row, column))
+					return (0);
+			}
+		}
+	}
+	return (1);
+}
+
+void	validate_map(t_game *game)
+{
 	if (!game || !game->map.grid)
-		return (exit_error("Map is missing"), 0);
-	if (!check_allowed_and_count_players(game, &player_count))
-		return (0);
-	if (player_count != 1)
-		return (exit_error("Map must have exactly one player"), 0);
-	if (!check_enclosed(game))
-		return (0);
+		exit_error(game, "Map is missing");
+	check_player_count(game);
+	if (!check_enclosed(game->map))
+		exit_error(game, "Map is not enclosed");
 	return (1);
 }

@@ -13,7 +13,7 @@ MLX_DIR = lib/minilibx-linux/
 INCLUDES = -I$(INCLUDES_DIR) -I$(LIBFT_INC_DIR) -I$(MLX_DIR)
 LIBS = -L$(LIBFT_BIN_DIR) -lft -L$(MLX_DIR) $(MLX_FLAGS)
 
-SRCS = src/main.c \
+SRCS =	src/main.c \
 		src/parser/parse_file.c \
 		src/parser/parse_textures.c \
 		src/parser/parse_colors.c \
@@ -23,6 +23,7 @@ SRCS = src/main.c \
 		src/utils/error.c \
 		src/utils/free.c \
 		src/game/init_game.c \
+		src/game/minimap.c \
 		src/game/3d.c \
 		src/game/mlx_raper.c \
 		src/game/movement.c

@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 21:32:35 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/02/20 06:45:50 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 21:04:03 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,5 @@ typedef struct s_img
 	int			line_len;
 	int			endian;
 }	t_img;
-
-typedef struct s_screen
-{
-	int			width;
-	int			height;
-	void		*win;	// Ponteiro janela (para o futuro)
-	t_img		*img;	// Estrutura de cada imagem
-}	t_screen;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/20 07:00:44 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 21:03:49 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@
 # define ROT_SPEED 0.1
 # define TILE_SIZE 1
 # define FOV 1.5708
-# define PI 3.141592653
+# define PI 3.14159265358979323846
+# define CIRCLE_RADIUS 20
 
 # define KEY_ESC 65307
 # define KEY_W 119
@@ -67,8 +68,6 @@ typedef struct s_player
 	double	dir_x;
 	double	dir_y;
 	float	orient;
-	double	plane_x;
-	double	plane_y;
 }	t_player;
 
 typedef struct s_map
@@ -81,25 +80,15 @@ typedef struct s_map
 typedef struct s_texture
 {
 	char	*path;
-	void	*img;
-	char	*addr;
-	int		width;
-	int		height;
-	int		bpp;
-	int		line_len;
-	int		endian;
+	int		**tex;
 }	t_texture;
 
 typedef struct s_game
 {
 	void		*mlx;
-	t_screen	*screen;
+	t_img		*img;
 	void		*win;
-	void		*img;
-	char		*img_addr;
-	int			img_bpp;
-	int			img_line_len;
-	int			img_endian;
+	int			open_fd;
 	t_player	player;
 	t_map		map;
 	t_texture	no_tex;
@@ -114,7 +103,7 @@ typedef struct s_game
 int		main(int argc, char **argv);
 
 /* parser/parse_file.c */
-int		parse_cub_file(t_game *game, char *filename);
+void	parse_cub_file(t_game *game, char *filename);
 
 /* parser/parse_textures.c */
 int		parse_texture(t_texture *tex, char *line, const char *id);
@@ -127,13 +116,14 @@ int		parse_map(t_game *game, int fd, char *first_line);
 int		is_map_line(char *line);
 
 /* parser/validate_map.c */
-int		validate_map(t_game *game);
+void	validate_map(t_game *game);
 
 /* parser/init_player.c */
-int		init_player_from_map(t_game *game);
+void	init_player_from_map(t_game *game, int px, int py);
 
 /* utils/error.c */
-void	exit_error(char *message);
+void	exit_errorfd(t_game *game, char *message);
+void	exit_error(t_game *game, char *message);
 
 /* utils/free.c */
 void	free_game(t_game *game);
@@ -144,17 +134,17 @@ void	free_map_grid(char **grid, int height);
 void	init_game(t_game *game);
 
 /* game/3d.c */
-void	draw3d(t_game *game);
+void	draw_3d(t_game *game);
 void	pixel_put(t_img *img, int x, int y, u_int32_t color);
 
-/* game/2d.c */
-void	draw2d(t_game *game);
+/* game/minimap.c */
+void	draw_minimap(t_game *game);
 
 /* game/movement.c */
 void	move(t_game *game, int keycode);
 void	rotate(t_game *game, int keycode);
 
-/* game/mlx_raper.c */
-void	my_mlx_put_image_to_window(t_game *game);
+/* game/ray_cast.c*/
+t_ray	*check_wall(t_game *g, t_pos pos, double ang, float pa);
 
 #endif

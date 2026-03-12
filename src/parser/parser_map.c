@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_map.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:38:49 by gude-and          #+#    #+#             */
-/*   Updated: 2026/02/18 17:58:02 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/03/12 18:55:06 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,34 +71,36 @@ static int	add_map_line(t_game *game, char *line)
 	if (clean[ft_strlen(clean) - 1] == '\n')
 		clean[ft_strlen(clean) - 1] = '\0';
 	if (!is_map_line(clean))
-		return (exit_error("Invalid character in map"), 0);
+		exit_errorfd(game, "Invalid character in map");
 	update_map_width(&game->map, clean);
 	new_grid = realloc_grid(game->map.grid, game->map.height, clean);
 	if (!new_grid)
-		return (exit_error("Memory allocation failed"), 0);
+		exit_errorfd(game, "Memory allocation failed in map grid");
 	game->map.grid = new_grid;
 	game->map.height++;
 	return (1);
 }
 
-static int	process_line(t_game *game, char *line, int *found_empty)
+void	process_line(t_game *game, char *line, int *found_empty)
 {
-	if (ft_strlen(line) == 0 || (ft_strlen(line) == 1 && line[0] == '\n'))
+	if (ft_strlen(line) == 1 && line[0] == '\n')
 	{
 		if (game->map.height > 0)
 			*found_empty = 1;
 		free(line);
-		return (1);
 	}
 	if (*found_empty)
-		return (free(line), exit_error("Map has empty line gap"), 0);
+	{
+		free(line);
+		exit_errorfd(game, "Map has empty line gap");
+	}
 	if (!add_map_line(game, line))
 		return (free(line), 0);
 	free(line);
 	return (1);
 }
 
-int	parse_map(t_game *game, int fd, char *first_line)
+int	parse_map(t_game *game, int fd, char *first_line) //confirmar que mapa tem de ter max_width em todas as rows para nao dar merda na validaçao
 {
 	char	*line;
 	int		gnl_ret;
@@ -106,8 +108,7 @@ int	parse_map(t_game *game, int fd, char *first_line)
 
 	found_empty = 0;
 	gnl_ret = 1;
-	if (!process_line(game, first_line, &found_empty))
-		return (0);
+	process_line(game, first_line, &found_empty);
 	while (1)
 	{
 		line = NULL;
@@ -118,10 +119,9 @@ int	parse_map(t_game *game, int fd, char *first_line)
 				free(line);
 			break ;
 		}
-		if (!process_line(game, line, &found_empty))
-			return (0);
+		process_line(game, line, &found_empty);
 	}
-	if (game->map.height < 3)
-		return (exit_error("Map too small"), 0);
+	if (game->map.height < 3 || game->map.width < 3)
+		exit_errorfd(game, "Map too small");
 	return (1);
 }
