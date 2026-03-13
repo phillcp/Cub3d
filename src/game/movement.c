@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 17:14:41 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 21:25:49 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/13 00:46:05 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,15 @@
 
 static void	can_move(t_game *game, t_pos dest)
 {
-	t_pos	tile;
+	int		tile_x;
+	int		tile_y;
 	char	dest_tile;
 
-	tile.x = dest.x / TILE_SIZE;
-	tile.y = dest.y / TILE_SIZE;
-	dest_tile = game->map.grid[(int)tile.y][(int)tile.x];
+	tile_x = dest.x / TILE_SIZE;
+	tile_y = dest.y / TILE_SIZE;
+	dest_tile = game->map.grid[tile_y][tile_x];
 	if (dest_tile != '1')
-	{
-		game->player.pos.x = dest.x;
-		game->player.pos.y = dest.y;
-	}
+		game->player.pos = dest;
 }
 
 static t_pos	get_sideways_dest(t_player player, int keycode)
@@ -54,44 +52,47 @@ void	move(t_game *game, int keycode)
 {
 	t_player	player;
 	t_pos		dest;
-	t_pos		delta;
 
 	player = game->player;
-	dest.x = player.pos.x;
-	dest.y = player.pos.y;
+	dest = player.pos;
 	if (keycode == MLX_KEY_W)
 	{
-		dest.x = player.pos.x + player.dir_x;
-		dest.y = player.pos.y + player.dir_y;
+		dest.x = player.pos.x + player.delta.x;
+		dest.y = player.pos.y + player.delta.y;
 	}
 	else if (keycode == MLX_KEY_S)
 	{
-		dest.x = player.pos.x - player.dir_x;
-		dest.y = player.pos.y - player.dir_y;
+		dest.x = player.pos.x - player.delta.x;
+		dest.y = player.pos.y - player.delta.y;
 	}
 	else if (keycode == MLX_KEY_A || keycode == MLX_KEY_D)
 	{
-		delta = get_sideways_dest(player, keycode);
-		dest.x = player.pos.x + delta.x;
-		dest.y = player.pos.y + delta.y;
+		dest = get_sideways_dest(player, keycode);
+		dest.x = player.pos.x + dest.x;
+		dest.y = player.pos.y + dest.y;
 	}
 	can_move(game, dest);
 }
 
 void	rotate(t_game *game, int keycode)
 {
+	float	*orient;
+	t_pos	*delta;
+
+	orient = &game->player.orient;
+	delta = &game->player.delta;
 	if (keycode == MLX_KEY_LEFT)
 	{
-		game->player.orient += ROT_SPEED;
-		if (game->player.orient > 2 * PI)
-			game->player.orient -= 2 * PI;
+		*orient += ROT_SPEED;
+		if (*orient > 2 * PI)
+			*orient -= 2 * PI;
 	}
 	else if (keycode == MLX_KEY_RIGHT)
 	{
-		game->player.orient -= ROT_SPEED;
-		if (game->player.orient < 0)
-			game->player.orient += 2 * PI;
+		*orient -= ROT_SPEED;
+		if (*orient < 0)
+			*orient += 2 * PI;
 	}
-	game->player.delta.x = cos(game->player.orient) * MOVE_SPEED;
-	game->player.delta.y = -sin(game->player.orient) * MOVE_SPEED;
+	delta->x = cos(*orient) * MOVE_SPEED;
+	delta->y = -sin(*orient) * MOVE_SPEED;
 }

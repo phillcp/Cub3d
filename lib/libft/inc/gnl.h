@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 12:59:11 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/01/30 12:59:36 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 23:04:41 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@
 # include <unistd.h>
 # include <sys/types.h>
 
-int		get_next_line(int fd, char **line);
+int		get_next_line(int fd, char **line, int clean);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 06:21:59 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 21:01:57 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/13 01:24:19 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,16 @@ static u_int32_t	pick_color(char map_tile)
 {
 	u_int32_t	color;
 
-	if (map_tile == 'W')
+	if (map_tile == '1')
 		color = create_trgb(255, 0, 0, 0);
-	else if (map_tile == 'D')
-		color = create_trgb(255, 255, 0, 255);
-	else if (map_tile == 'T')
-		color = create_trgb(255, 255, 255, 0);
-	else
+	else if (map_tile == '0')
 		color = create_trgb(255, 255, 255, 255);
+	else
+		color = create_trgb(0, 0, 0, 0);
 	return (color);
 }
 
-void	draw_circle(t_img *img, int xo, int yo, u_int32_t	color)
+void	draw_circle(t_img *img, int xo, int yo, u_int32_t color)
 {
 	int	radius;
 	int	x;
@@ -55,12 +53,13 @@ void	draw_circle(t_img *img, int xo, int yo, u_int32_t	color)
 
 static void	draw_player(int x, int y, t_game *g)
 {
-	draw_circle2(g->img, SCREEN_WIDTH - x * MINIMAP_TILE_SIZE +
-		MINIMAP_TILE_SIZE / 2, y * MINIMAP_TILE_SIZE
-		+ MINIMAP_TILE_SIZE / 2, create_trgb(255, 0, 255, 0));
+	draw_circle(g->img,
+		x * MINIMAP_TILE_SIZE + MINIMAP_TILE_SIZE / 2,
+		y * MINIMAP_TILE_SIZE + MINIMAP_TILE_SIZE / 2,
+		create_trgb(255, 0, 255, 0));
 }
 
-static void	draw_square(int x, int y, int color, t_game *g)
+static void	draw_mini_bg(int x, int y, int color, t_game *g)
 {
 	int	k;
 	int	l;
@@ -71,11 +70,11 @@ static void	draw_square(int x, int y, int color, t_game *g)
 		l = -1;
 		while (++l < MINIMAP_TILE_SIZE)
 		{
-			if (SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k >= 0
-				&& SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k < SCREEN_WIDTH
+			if (x * MINIMAP_TILE_SIZE + k >= 0
+				&& x * MINIMAP_TILE_SIZE + k < SCREEN_WIDTH
 				&& y * MINIMAP_TILE_SIZE + l >= 0
 				&& y * MINIMAP_TILE_SIZE + l < SCREEN_HEIGHT)
-				pixel_put(g->img, SCREEN_WIDTH - x * MINIMAP_TILE_SIZE + k,
+				pixel_put(g->img, x * MINIMAP_TILE_SIZE + k,
 					y * MINIMAP_TILE_SIZE + l, color);
 		}
 	}
@@ -90,13 +89,13 @@ void	draw_minimap(t_game *game)
 	i = -1;
 	while (++i < game->map.height)
 	{
-		j = 0;
-		while (++j <= game->map.width)
+		j = -1;
+		while (++j < game->map.width)
 		{
-			c = pick_color(game->map.grid[i][game->map.width - j]);
-			draw_square(j, i, c, game);
+			c = pick_color(game->map.grid[i][j]);
+			draw_mini_bg(j, i, c, game);
 		}
 	}
-	draw_player((game->map.width - (int)game->player.pos.x),
+	draw_player(((int)game->player.pos.x),
 		(int)game->player.pos.y, game);
 }

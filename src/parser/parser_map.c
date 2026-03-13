@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 17:38:49 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/12 18:55:06 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 23:18:37 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static char	**realloc_grid(char **old, int old_size, char *new_line)
 	return (new_grid);
 }
 
-static int	add_map_line(t_game *game, char *line)
+static void	add_map_line(t_game *game, char *line)
 {
 	char	*clean;
 	char	**new_grid;
@@ -78,7 +78,6 @@ static int	add_map_line(t_game *game, char *line)
 		exit_errorfd(game, "Memory allocation failed in map grid");
 	game->map.grid = new_grid;
 	game->map.height++;
-	return (1);
 }
 
 void	process_line(t_game *game, char *line, int *found_empty)
@@ -94,10 +93,8 @@ void	process_line(t_game *game, char *line, int *found_empty)
 		free(line);
 		exit_errorfd(game, "Map has empty line gap");
 	}
-	if (!add_map_line(game, line))
-		return (free(line), 0);
+	add_map_line(game, line);
 	free(line);
-	return (1);
 }
 
 int	parse_map(t_game *game, int fd, char *first_line) //confirmar que mapa tem de ter max_width em todas as rows para nao dar merda na validaçao
@@ -112,7 +109,7 @@ int	parse_map(t_game *game, int fd, char *first_line) //confirmar que mapa tem d
 	while (1)
 	{
 		line = NULL;
-		gnl_ret = get_next_line(fd, &line);
+		gnl_ret = get_next_line(fd, &line, 0);
 		if (gnl_ret <= 0)
 		{
 			if (line)

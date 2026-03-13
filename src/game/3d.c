@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 20:55:13 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/13 00:32:43 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static void	draw_bg(t_game *game, int f_color, int c_color)
 	}
 	while (y < SCREEN_HEIGHT)
 	{
+		x = -1;
 		while (++x < SCREEN_WIDTH)
 			pixel_put(game->img, x, y, f_color);
 		++y;
@@ -64,9 +65,9 @@ static void	draw_walls(t_game *game, t_pos pos, float pa)
 	while (++i < SCREEN_WIDTH)
 	{
 		angle = (i * FOV / SCREEN_WIDTH) - FOV / 2;
-		angle = fmod(angle + (2 * PI), 2 * PI);
+		angle = fmod(pa + angle + (2 * PI), 2 * PI);
 		check = check_wall(game, pos, angle, pa);
-		j = -1;
+		j = check->lo - 1;
 		while (++j < SCREEN_HEIGHT && j < check->lh + check->lo)
 		{
 			k = -1;
@@ -75,7 +76,7 @@ static void	draw_walls(t_game *game, t_pos pos, float pa)
 					check->texture[(int)check->tex.y][(int)(check->tex.x)]);
 			check->tex.y += TEXTURE_SIZE / (double)check->lh;
 			if (check->tex.y >= TEXTURE_SIZE)
-					check->tex.y = TEXTURE_SIZE - 1;
+				check->tex.y = TEXTURE_SIZE - 1;
 		}
 	}
 	free(check);

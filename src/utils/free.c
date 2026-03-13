@@ -6,13 +6,13 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:22:47 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/12 21:03:38 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 22:22:28 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	free_map_grid(char **grid, int height)
+void	free_map_grid(char **grid, int height)
 {
 	int	i;
 
@@ -27,7 +27,7 @@ static void	free_map_grid(char **grid, int height)
 	free(grid);
 }
 
-static void	free_matrix(void **matrix)
+void	free_matrix(int **matrix)
 {
 	int	i;
 

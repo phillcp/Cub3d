@@ -9,7 +9,7 @@ MinilibX, the graphical engine used, uses a few libraries that might not be avai
 
 sudo apt-get update && sudo apt-get install xorg libxext-dev zlib1g-dev libbsd-dev
 
-You can compile the program by running "make" in the project's root folder and to run it just type "./bin/cub3d *mapname.cub*" or "bash bin/cub3d *mapname.cub*".
+You can compile the program by running "make" in the project's root folder and to run it just type "./cub3d *mapname.cub*" or "bash cub3d *mapname.cub*".
 
 Resources:
 www.youtube.com/watch?v=gYRrGTC7GtA -> very good resource on how to raycast.

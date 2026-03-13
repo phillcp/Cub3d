@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 22:26:14 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 21:54:11 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/13 00:12:14 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,3 +122,20 @@ t_ray	*check_wall(t_game *g, t_pos pos, double ang, float pa)
 	check->tex.y = check->texoff * (TEXTURE_SIZE / (double)check->lh);
 	return (check);
 }
+
+// t_ray *check_walls(t_game *g, t_pos pos)
+// {
+// 	int	r;
+// 	int mx;
+// 	int my;
+// 	int mp;
+// 	int dof;
+
+// 	float rx;
+// 	float ry;
+// 	float ra;
+// 	float xo;
+// 	float yo;
+
+// 	while ()
+// }

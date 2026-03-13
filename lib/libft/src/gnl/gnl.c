@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 12:58:09 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/01/30 14:50:17 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 23:08:35 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,17 @@ static int	save_line(int fd, char **nl, char **line)
 	return (1);
 }
 
-int	get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line, int clean)
 {
 	char		buffer[BUFFER_SIZE + 1];
 	static char	*newline[FD_MAX];
 	int			ret;
 
+	if (clean)
+	{
+		free(newline[fd]);
+		return (0);
+	}
 	if (fd < 0 || fd >= FD_MAX || !line || BUFFER_SIZE <= 0)
 		return (-1);
 	ret = gnl(fd, &newline[fd], buffer);
