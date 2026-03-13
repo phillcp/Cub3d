@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 15:21:33 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 21:03:10 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/12 23:50:31 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ static void	init_game_struct(t_game *game)
 	game->ea_tex.tex = NULL;
 	game->we_tex.tex = NULL;
 	game->map.grid = NULL;
-	game->win = NULL;
-	game->mlx = NULL;
 	game->floor_color = -1;
 	game->ceiling_color = -1;
+	game->mlx = mlx_init();
+	if (!game->mlx)
+		exit_error(game, "Failed to init mlx");
 }
 
 int	main(int argc, char **argv)

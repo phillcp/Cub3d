@@ -12,20 +12,6 @@
 
 #include "cub3d.h"
 
-static char	map_at(t_map *map, int x, int y)
-{
-	int	row_len;
-
-	if (y < 0 || y >= map->height)
-		return (' ');
-	if (!map->grid[y])
-		return (' ');
-	row_len = ft_strlen(map->grid[y]);
-	if (x < 0 || x >= row_len)
-		return (' ');
-	return (map->grid[y][x]);
-}
-
 static void check_player_count(t_game *game)
 {
 	int		y;
@@ -50,7 +36,6 @@ static void check_player_count(t_game *game)
 		}
 		y++;
 	}
-	return (1);
 }
 
 int	check_surroundings(t_map map, int row, int column)
@@ -68,12 +53,8 @@ int	check_enclosed(t_map map)
 {
 	int		row;
 	int		column;
-	int		row_start;
-	int		col_start;
 
 	row = -1;
-	row_start = 0;
-	col_start = 0;
 	while (++row < map.height)
 	{
 		column = -1;
@@ -99,5 +80,4 @@ void	validate_map(t_game *game)
 	check_player_count(game);
 	if (!check_enclosed(game->map))
 		exit_error(game, "Map is not enclosed");
-	return (1);
 }

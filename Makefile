@@ -25,7 +25,7 @@ SRCS =	src/main.c \
 		src/game/init_game.c \
 		src/game/minimap.c \
 		src/game/3d.c \
-		src/game/mlx_raper.c \
+		src/game/ray_cast.c \
 		src/game/movement.c
 
 OBJS = $(SRCS:.c=.o)

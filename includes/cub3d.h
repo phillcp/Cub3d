@@ -6,7 +6,7 @@
 /*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/12 21:03:49 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/13 00:30:13 by fiheaton         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,11 @@
 # include "gnl.h"
 # include "mlx.h"
 # include "mlx_keys.h"
-# include "image.h"
 
-# define SCREEN_WIDTH 800
-# define SCREEN_HEIGHT 600
+# define TEXTURE_SIZE	64
+# define MINIMAP_TILE_SIZE 10
+# define SCREEN_WIDTH 1024
+# define SCREEN_HEIGHT 512
 # define MAP_CHARS "01NSEW "
 # define PLAYER_CHARS "NSEW"
 # define RGB_MAX 255
@@ -36,7 +37,7 @@
 # define ROT_SPEED 0.1
 # define TILE_SIZE 1
 # define FOV 1.5708
-# define PI 3.14159265358979323846
+# define PI 3.141592653
 # define CIRCLE_RADIUS 20
 
 # define KEY_ESC 65307
@@ -60,6 +61,28 @@ typedef struct s_pos
 	double	x;
 	double	y;
 }	t_pos;
+
+typedef struct s_img
+{
+	void		*img;
+	char		*addr;
+	int			bpp;
+	int			line_len;
+	int			endian;
+}	t_img;
+
+typedef struct s_ray
+{
+	double	rx;
+	double	ry;
+	double	z;
+	t_pos	tex;
+	int		**texture;
+	double	lh;
+	double	lo;
+	double	texoff;
+	t_pos	off;
+}	t_ray;
 
 typedef struct s_player
 {
@@ -106,10 +129,10 @@ int		main(int argc, char **argv);
 void	parse_cub_file(t_game *game, char *filename);
 
 /* parser/parse_textures.c */
-int		parse_texture(t_texture *tex, char *line, const char *id);
+// int		parse_texture(t_texture *tex, char *line, const char *id);
 
 /* parser/parse_colors.c */
-int		parse_color(int *color, char *line, const char *id);
+// int		parse_color(int *color, char *line, const char *id);
 
 /* parser/parse_map.c */
 int		parse_map(t_game *game, int fd, char *first_line);
@@ -127,6 +150,7 @@ void	exit_error(t_game *game, char *message);
 
 /* utils/free.c */
 void	free_game(t_game *game);
+void	free_matrix(int **matrix);
 void	ft_free_split(char **split);
 void	free_map_grid(char **grid, int height);
 
