@@ -73,8 +73,12 @@ static int	run_single_test(const t_test *t)
 	created = 0;
 	if (t->content)
 	{
-		path = write_temp_file(t->content, t->suffix ? t->suffix : ".cub",
-			path_buf, sizeof(path_buf));
+		if (t->suffix)
+			path = write_temp_file(t->content, t->suffix,
+					path_buf, sizeof(path_buf));
+		else
+			path = write_temp_file(t->content, ".cub",
+					path_buf, sizeof(path_buf));
 		created = 1;
 	}
 	else

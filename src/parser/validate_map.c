@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   validate_map.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: github-copilot                              +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 00:00:00 by github-copilot    #+#    #+#             */
-/*   Updated: 2026/02/18 00:00:00 by github-copilot   ###   ########.fr       */
+/*   Created: 2026/03/18 19:46:37 by gude-and          #+#    #+#             */
+/*   Updated: 2026/03/18 19:53:54 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void check_player_count(t_game *game)
+static void	check_player_count(t_game *game)
 {
 	int		y;
 	int		x;

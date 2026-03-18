@@ -6,7 +6,7 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/15 17:57:38 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/03/18 19:48:19 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	pixel_put_tex(t_img *img, int x, int y, int color)
 	dst[0] = color;
 }
 
-static void	draw_bg(t_game *game, int f_color, int c_color)
+void	draw_bg(t_game *game, int f_color, int c_color)
 {
 	int	x;
 	int	y;
@@ -53,7 +53,7 @@ static void	draw_bg(t_game *game, int f_color, int c_color)
 	}
 }
 
-static void	draw_walls(t_game *game, t_pos pos, float pa)
+void	draw_walls(t_game *game, t_pos pos, float pa)
 {
 	t_ray	*check;
 	double	angle;

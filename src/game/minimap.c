@@ -6,7 +6,7 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 06:21:59 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/15 17:56:24 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/03/18 19:48:39 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ u_int32_t	create_trgb(u_int32_t t, u_int32_t r, u_int32_t g, u_int32_t b)
 	return (t << 24 | r << 16 | g << 8 | b);
 }
 
-static u_int32_t	pick_color(char map_tile)
+u_int32_t	pick_color(char map_tile)
 {
 	u_int32_t	color;
 
@@ -51,7 +51,7 @@ void	draw_circle(t_img *img, int xo, int yo, u_int32_t color)
 	}
 }
 
-static void	draw_player(int x, int y, t_game *g)
+void	draw_player(int x, int y, t_game *g)
 {
 	draw_circle(g->img,
 		x * MINIMAP_TILE_SIZE + MINIMAP_TILE_SIZE / 2,
@@ -59,7 +59,7 @@ static void	draw_player(int x, int y, t_game *g)
 		create_trgb(255, 0, 255, 0));
 }
 
-static void	draw_mini_bg(int x, int y, int color, t_game *g)
+void	draw_mini_bg(int x, int y, int color, t_game *g)
 {
 	int	k;
 	int	l;

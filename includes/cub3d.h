@@ -6,7 +6,7 @@
 /*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/18 19:15:13 by gude-and         ###   ########.fr       */
+/*   Updated: 2026/03/18 19:57:17 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ int		all_elements_parsed(t_game *game);
 /* parser/parse_elements.c */
 void	parse_texture_path(t_game *game, char *line);
 void	parse_color(t_game *game, char *line);
-u_int32_t	create_rgb(u_int32_t t, u_int32_t r, u_int32_t g, u_int32_t b);
 
 /* parser/parse_textures.c */
 void	load_textures(t_game *game);
@@ -174,9 +173,15 @@ void	init_game(t_game *game);
 /* game/3d.c */
 void	draw_3d(t_game *game);
 void	pixel_put(t_img *img, int x, int y, u_int32_t color);
+void	draw_bg(t_game *game, int f_color, int c_color);
+void	draw_walls(t_game *game, t_pos pos, float pa);
+float	fix_angle(float pa);
 
 /* game/minimap.c */
 void	draw_minimap(t_game *game);
+void	draw_player(int x, int y, t_game *g);
+void	draw_mini_bg(int x, int y, int color, t_game *g);
+void	draw_circle(t_img *img, int xo, int yo, u_int32_t color);
 
 /* game/movement.c */
 void	move(t_game *game, int keycode);
