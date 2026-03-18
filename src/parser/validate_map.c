@@ -36,6 +36,8 @@ static void check_player_count(t_game *game)
 		}
 		y++;
 	}
+	if (!p_count)
+		exit_error(game, "Map must have one player");
 }
 
 int	check_surroundings(t_map map, int row, int column)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:16:31 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/13 00:30:13 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/18 19:15:13 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ typedef struct s_game
 	t_img		*img;
 	void		*win;
 	int			open_fd;
+	char		*map_filename;
 	t_player	player;
 	t_map		map;
 	t_texture	no_tex;
@@ -127,16 +128,29 @@ int		main(int argc, char **argv);
 
 /* parser/parse_file.c */
 void	parse_cub_file(t_game *game, char *filename);
+void	parse_line(t_game *game, char *line);
+int		all_elements_parsed(t_game *game);
+
+/* parser/parse_elements.c */
+void	parse_texture_path(t_game *game, char *line);
+void	parse_color(t_game *game, char *line);
+u_int32_t	create_rgb(u_int32_t t, u_int32_t r, u_int32_t g, u_int32_t b);
 
 /* parser/parse_textures.c */
-// int		parse_texture(t_texture *tex, char *line, const char *id);
+void	load_textures(t_game *game);
+int		**load_tex(t_game *game, char *path);
 
-/* parser/parse_colors.c */
-// int		parse_color(int *color, char *line, const char *id);
+/* parser/parser_map.c */
+int		parse_map(t_game *game, char *first_line, int map_start_line);
 
-/* parser/parse_map.c */
-int		parse_map(t_game *game, int fd, char *first_line);
+/* parser/parser_map_validation.c */
+void	validate_map_line(t_game *game, char *line, int *found_empty);
+
+/* parser/parser_map_utils.c */
 int		is_map_line(char *line);
+int		line_len_without_nl(char *line);
+void	update_map_width(t_map *map, char *line);
+char	*build_padded_map_line(t_game *game, char *line);
 
 /* parser/validate_map.c */
 void	validate_map(t_game *game);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 12:58:09 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 23:08:35 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:33:18 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,15 @@ int	get_next_line(int fd, char **line, int clean)
 	static char	*newline[FD_MAX];
 	int			ret;
 
+	if (fd < 0 || fd >= FD_MAX || BUFFER_SIZE <= 0)
+		return (-1);
 	if (clean)
 	{
 		free(newline[fd]);
+		newline[fd] = NULL;
 		return (0);
 	}
-	if (fd < 0 || fd >= FD_MAX || !line || BUFFER_SIZE <= 0)
+	if (!line)
 		return (-1);
 	ret = gnl(fd, &newline[fd], buffer);
 	if (ret <= 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   3d.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 18:01:02 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/13 00:32:43 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:57:38 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ static void	draw_walls(t_game *game, t_pos pos, float pa)
 			if (check->tex.y >= TEXTURE_SIZE)
 				check->tex.y = TEXTURE_SIZE - 1;
 		}
+		free(check);
 	}
-	free(check);
 }
 
 float	fix_angle(float pa)
@@ -91,15 +91,4 @@ float	fix_angle(float pa)
 	else
 		pa = PI + (2 * PI - pa);
 	return (pa);
-}
-
-void	draw_3d(t_game *game)
-{
-	float		pa;
-
-	pa = fix_angle(game->player.orient);
-	draw_bg(game, game->floor_color, game->ceiling_color);
-	draw_walls(game, game->player.pos, pa);
-	draw_minimap(game);
-	mlx_put_image_to_window(game->mlx, game->win, game->img->img, 0, 0);
 }

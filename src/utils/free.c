@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:22:47 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/12 22:22:28 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:55:32 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,23 +75,13 @@ void	free_game(t_game *game)
 	{
 		free_textures(game);
 		free_map_grid(game->map.grid, game->map.height);
+		if (game->map_filename)
+			free(game->map_filename);
 		free_screen(game);
 		if (game->mlx)
+		{
+			mlx_destroy_display(game->mlx);
 			free(game->mlx);
+		}
 	}
-}
-
-void	ft_free_split(char **split)
-{
-	int	i;
-
-	if (!split)
-		return ;
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
 }

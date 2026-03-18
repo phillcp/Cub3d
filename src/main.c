@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/30 15:21:33 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/12 23:50:31 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:23:36 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static void	init_game_struct(t_game *game)
 	game->ea_tex.tex = NULL;
 	game->we_tex.tex = NULL;
 	game->map.grid = NULL;
+	game->map_filename = NULL;
+	game->open_fd = -1;
 	game->floor_color = -1;
 	game->ceiling_color = -1;
 	game->mlx = mlx_init();

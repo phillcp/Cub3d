@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   parse_file.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/04 18:18:30 by gude-and          #+#    #+#             */
-/*   Updated: 2026/03/12 23:52:07 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 18:00:47 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static int	all_elements_parsed(t_game *game)
+int	all_elements_parsed(t_game *game)
 {
 	if (!game->no_tex.path || !game->so_tex.path)
 		return (0);
@@ -23,150 +23,13 @@ static int	all_elements_parsed(t_game *game)
 	return (1);
 }
 
-int	check_line_texpath(t_game *game, const char *line)
-{
-	int	i;
-	int	spaces;
-
-	i = 2;
-	spaces = 0;
-	if (!ft_isspace(line[i]))
-		exit_errorfd(game, "Wrong texture path formating in map file");
-	while (line[i + spaces] && ft_isspace(line[i + spaces]))
-		spaces++;
-	i += spaces;
-	if (!line[i])
-		exit_errorfd(game, "Wrong texture path formating in map file");
-	return (spaces);
-}
-
-char	*read_file_path(t_game *game, char *line)
-{
-	char	*path;
-	int		last_char;
-	int		spaces;
-
-	spaces = check_line_texpath(game, line);
-	path = ft_strdup(line + spaces + 2);
-	if (!path)
-	{
-		free(line);
-		get_next_line(game->open_fd, &line, 1);
-		exit_errorfd(game, "Failed allocation while importing texture");
-	}
-	last_char = ft_strlen(line) - 1;
-	while (ft_isspace(line[last_char]))
-		path[last_char--] = '\0';
-	return (path);
-}
-
-void	parse_texture_path(t_game *game, char *line)
-{
-	if (line[0] == 'N' && line[1] == 'O' && !game->no_tex.path)
-		game->no_tex.path = read_file_path(game, line);
-	else if (line[0] == 'S' && line[1] == 'O' && !game->so_tex.path)
-		game->so_tex.path = read_file_path(game, line);
-	else if (line[0] == 'W' && line[1] == 'E' && !game->we_tex.path)
-		game->we_tex.path = read_file_path(game, line);
-	else if (line[0] == 'E' && line[1] == 'A' && !game->ea_tex.path)
-		game->ea_tex.path = read_file_path(game, line);
-	else
-	{
-		free(line);
-		get_next_line(game->open_fd, &line, 1);
-		exit_errorfd(game, "Invalid line in map file");
-	}
-}
-
-u_int32_t	create_rgb(u_int32_t t, u_int32_t r, u_int32_t g, u_int32_t b)
-{
-	return (t << 24 | r << 16 | g << 8 | b);
-}
-
-int	check_nmr_comma(const char *line, int i, int last)
-{
-	int	j;
-
-	j = 0;
-	if (!ft_isdigit(line[i + j]))
-		return (-1);
-	while (line[i + j] && ft_isdigit(line[i + j]))
-		j++;
-	if (!last)
-	{
-		if (line[i + j] != ',')
-			return (-1);
-		j++;
-	}
-	return (j);
-}
-
-void	check_line_color(t_game *game, const char *line)
-{
-	int	i;
-	int	check;
-
-	i = 1;
-	check = 0;
-	if (!ft_isspace(line[i]))
-		check = -1;
-	while (line[i] && ft_isspace(line[i]))
-		i++;
-	check = check_nmr_comma(line, i, 0);
-	if (check == -1)
-		exit_errorfd(game, "Bad RGB value");
-	i += check;
-	check = check_nmr_comma(line, i, 0);
-	if (check == -1)
-		exit_errorfd(game, "Bad RGB value");
-	i += check;
-	check = check_nmr_comma(line, i, 1);
-	if (check == -1)
-		exit_errorfd(game, "Bad RGB value");
-}
-
-u_int32_t	read_rgb(t_game *game, const char *line)
-{
-	int			i;
-	u_int32_t	r;
-	u_int32_t	g;
-	u_int32_t	b;
-
-	check_line_color(game, line);
-	r = 0;
-	g = 0;
-	b = 0;
-	i = 1;
-	while (line[i] && line[i] != ',' && ft_isdigit(line[i]))
-		r = r * 10 + (line[i++] - 48);
-	i++;
-	while (line[i] && line[i] != ',' && ft_isdigit(line[i]))
-		g = g * 10 + (line[i++] - 48);
-	i++;
-	while (line[i] && line[i] != ',' && ft_isdigit(line[i]))
-		b = b * 10 + (line[i++] - 48);
-	if (r > 255 || g > 255 || b > 255)
-		exit_errorfd(game, "Bad RGB value");
-	return (create_rgb(255, r, g, b));
-}
-
-void	parse_color(t_game *game, char *line)
-{
-	if (line[0] == 'F')
-		game->floor_color = read_rgb(game, line);
-	else if (line[0] == 'C')
-		game->ceiling_color = read_rgb(game, line);
-	else
-		exit_errorfd(game, "Invalid line in map file");
-}
-
 void	parse_line(t_game *game, char *line)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (ft_isspace(line[i]))
+	while (line[i] && ft_isspace(line[i]))
 		i++;
 	if (!line[i])
 		return ;
@@ -185,13 +48,14 @@ void	parse_line(t_game *game, char *line)
 	}
 }
 
-static int	parse_elements_and_map(t_game *game)
+static void	parse_elements_and_map(t_game *game)
 {
-	int		lines_read;
 	char	*line;
+	int		lines_read;
 	int		map_start;
 
 	lines_read = 0;
+	map_start = 0;
 	while (get_next_line(game->open_fd, &line, 0) > 0)
 	{
 		if (line[0] && line[0] != '\n' && !all_elements_parsed(game))
@@ -199,7 +63,7 @@ static int	parse_elements_and_map(t_game *game)
 		else if (line[0] && line[0] != '\n' && all_elements_parsed(game))
 		{
 			map_start = 1;
-			parse_map(game, game->open_fd, line); //confirmar que mapa tem de ter max_width em todas as rows para nao dar merda na validaçao
+			parse_map(game, line, lines_read);
 			break ;
 		}
 		ft_free(line);
@@ -207,124 +71,30 @@ static int	parse_elements_and_map(t_game *game)
 	}
 	if (!map_start)
 		exit_errorfd(game, "No map in file");
-	return (lines_read);
-}
-
-char	*get_data_addr(t_game *game, t_img *img)
-{
-	char	*addr;
-
-	addr = mlx_get_data_addr(img->img, &img->bpp, &img->line_len, &img->endian);
-	if (!addr)
-		exit_error(game, "Failed to get data addr while importing texture");
-	return (addr);
-}
-
-int	**new_matrix(t_game *game)
-{
-	int		**tex;
-	int		y;
-
-	tex = ft_calloc(TEXTURE_SIZE + 1, sizeof(int *));
-	if (!tex)
-		exit_error(game, "Failed allocation while getting new_tex arr");
-	y = -1;
-	while (++y < TEXTURE_SIZE)
-	{
-		tex[y] = ft_calloc(TEXTURE_SIZE, sizeof(int));
-		if (!tex[y])
-		{
-			free_matrix(tex);
-			exit_error(game, "Failed allocation while getting new_tex line");
-		}
-	}
-	return (tex);
-}
-
-void	fill_matrix(t_img *tmp, int **texture, int height, int width)
-{
-	int				x;
-	int				y;
-	unsigned char	*c;
-
-	y = -1;
-	while (++y < height)
-	{
-		x = -1;
-		while (++x < width)
-		{
-			c = (unsigned char *)tmp->addr + (y * tmp->line_len + (x * \
-				(tmp->bpp / 8)));
-			texture[y][x] = (unsigned int)(c[3] << 24 | c[2] << 16 \
-				| c[1] << 8 | c[0]);
-		}
-	}
-}
-
-int	**load_tex(t_game *game, char *path)
-{
-	int		**tex;
-	t_img	*tmp;
-	int		img_height;
-	int		img_width;
-
-	if (!path)
-		exit_error(game, "Missing path to texture");
-	tmp = ft_calloc(1, sizeof(t_img));
-	if (!tmp)
-		exit_error(game, "Failed allocation while loading texture");
-	tmp->img = mlx_xpm_file_to_image(game->mlx, path, &img_width, &img_height);
-	if (!tmp->img)
-		exit_error(game, "Failed to load texture image");
-	tmp->addr = get_data_addr(game, tmp);
-	tex = new_matrix(game);
-	fill_matrix(tmp, tex, img_height, img_width);
-	mlx_destroy_image(game->mlx, tmp->img);
-	free(tmp);
-	return (tex);
-}
-
-void	load_textures(t_game *game)
-{
-	game->no_tex.tex = load_tex(game, game->no_tex.path);
-	game->so_tex.tex = load_tex(game, game->so_tex.path);
-	game->we_tex.tex = load_tex(game, game->we_tex.path);
-	game->ea_tex.tex = load_tex(game, game->ea_tex.path);
-}
-
-static void	init_window(t_game *game)
-{
-	t_img	*img;
-
-	game->win = mlx_new_window(game->mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Cub3D");
-	if (!game->win)
-		exit_error(game, "Failed to init window");
-	img = ft_calloc(1, sizeof(t_img));
-	if (!img)
-		exit_error(game, "Failed to allocate first img");
-	img->img = mlx_new_image(game->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-	if (!img->img)
-		exit_error(game, "Failed to create first img with mlx");
-	img->addr = mlx_get_data_addr(img->img, &img->bpp,
-		&img->line_len, &img->endian);
-	if (!img->addr)
-		exit_error(game, "Failed to get first img addr with mlx");
-	game->img = img;
 }
 
 void	parse_cub_file(t_game *game, char *filename)
 {
 	int		len;
+	char	*line;
 
 	len = ft_strlen(filename);
 	if (len < 4 || ft_strncmp(filename + len - 4, ".cub", 4) != 0)
 		exit_error(game, "Invalid file extension. Must be .cub");
+	game->map_filename = ft_strdup(filename);
+	if (!game->map_filename)
+		exit_error(game, "Failed to save map filename");
 	game->open_fd = open(filename, O_RDONLY);
 	if (game->open_fd < 0)
 		exit_error(game, "Could not open file");
-	parse_elements_and_map(game); //check parse_map
-	close(game->open_fd);
+	parse_elements_and_map(game);
+	if (game->open_fd >= 0)
+	{
+		line = NULL;
+		get_next_line(game->open_fd, &line, 1);
+		close(game->open_fd);
+		game->open_fd = -1;
+	}
 	load_textures(game);
 	validate_map(game);
-	init_window(game);
 }

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 typedef struct s_test
 {
@@ -20,8 +21,20 @@ typedef struct s_test
 static void	init_game_struct(t_game *game)
 {
 	ft_memset(game, 0, sizeof(t_game));
+	game->no_tex.path = NULL;
+	game->so_tex.path = NULL;
+	game->ea_tex.path = NULL;
+	game->we_tex.path = NULL;
+	game->no_tex.tex = NULL;
+	game->so_tex.tex = NULL;
+	game->ea_tex.tex = NULL;
+	game->we_tex.tex = NULL;
+	game->map.grid = NULL;
+	game->map_filename = NULL;
+	game->open_fd = -1;
 	game->floor_color = -1;
 	game->ceiling_color = -1;
+	game->mlx = mlx_init();
 }
 
 static const char	*write_temp_file(const char *content, const char *suffix,
@@ -52,8 +65,9 @@ static int	run_single_test(const t_test *t)
 	t_game	game;
 	const char	*path;
 	char		path_buf[128];
+	pid_t		pid;
+	int		status;
 	int		created;
-	int		ok;
 	int		pass;
 
 	created = 0;
@@ -70,15 +84,48 @@ static int	run_single_test(const t_test *t)
 		printf("[FAIL] %s (setup failed)\n", t->name);
 		return (0);
 	}
-	init_game_struct(&game);
-	ok = parse_cub_file(&game, (char *)path);
-	pass = (ok == t->expect_ok);
-	if (ok && t->expect_height >= 0 && game.map.height != t->expect_height)
-		pass = 0;
-	if (ok && t->expect_first_row && game.map.grid
-		&& strcmp(game.map.grid[0], t->expect_first_row) != 0)
-		pass = 0;
-	free_game(&game);
+	pass = 1;
+	if (t->expect_ok)
+	{
+		init_game_struct(&game);
+		if (!game.mlx)
+			pass = 0;
+		else
+		{
+			parse_cub_file(&game, (char *)path);
+			if (t->expect_height >= 0 && game.map.height != t->expect_height)
+				pass = 0;
+			if (pass && t->expect_first_row && game.map.grid
+				&& strcmp(game.map.grid[0], t->expect_first_row) != 0)
+				pass = 0;
+			if (pass && t->expect_first_row && (!game.map.grid || !game.map.grid[0]))
+				pass = 0;
+		}
+		free_game(&game);
+	}
+	else
+	{
+		pid = fork();
+		if (pid == -1)
+		{
+			if (created)
+				unlink(path);
+			printf("[FAIL] %s (fork failed)\n", t->name);
+			return (0);
+		}
+		if (pid == 0)
+		{
+			init_game_struct(&game);
+			if (!game.mlx)
+				_exit(EXIT_FAILURE);
+			parse_cub_file(&game, (char *)path);
+			free_game(&game);
+			_exit(EXIT_SUCCESS);
+		}
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+			pass = 0;
+	}
 	if (created)
 		unlink(path);
 	printf("[%s] %s (expected %s)\n", pass ? "PASS" : "FAIL", t->name,

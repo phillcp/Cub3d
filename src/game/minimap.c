@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fiheaton <fiheaton@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gude-and <gude-and@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/20 06:21:59 by fiheaton          #+#    #+#             */
-/*   Updated: 2026/03/13 01:24:19 by fiheaton         ###   ########.fr       */
+/*   Updated: 2026/03/15 17:56:24 by gude-and         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,24 +78,4 @@ static void	draw_mini_bg(int x, int y, int color, t_game *g)
 					y * MINIMAP_TILE_SIZE + l, color);
 		}
 	}
-}
-
-void	draw_minimap(t_game *game)
-{
-	int			j;
-	int			i;
-	u_int32_t	c;
-
-	i = -1;
-	while (++i < game->map.height)
-	{
-		j = -1;
-		while (++j < game->map.width)
-		{
-			c = pick_color(game->map.grid[i][j]);
-			draw_mini_bg(j, i, c, game);
-		}
-	}
-	draw_player(((int)game->player.pos.x),
-		(int)game->player.pos.y, game);
 }
